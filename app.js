@@ -1,4 +1,6 @@
 const fastify = require("fastify");
+const urlRoutes = require("./src/routes/url.routes");
+const errorHandler = require("./src/middlewares/errorHandler");
 
 
 const app = fastify({
@@ -13,5 +15,10 @@ app.get("/health", async () => {
     };
 });
 
+app.register(urlRoutes,{
+    prefix: `/api/${process.env.NODE_VERSION}`
+});
+
+app.setErrorHandler(errorHandler);
 
 module.exports = app;
