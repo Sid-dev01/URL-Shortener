@@ -1,8 +1,11 @@
-const urlController = require("../controllers/url.controller");
+const UrlController = require("../controllers/url.controller");
 
 
-const urlRoutes = async (app) => {
-    app.post("/create-short-url", urlController.createShortUrl);
+async function urlRoutes(fastify) {
+    fastify.post(
+        "/shorten",
+        UrlController.createShortUrl
+    )
 }
 
 module.exports = urlRoutes;

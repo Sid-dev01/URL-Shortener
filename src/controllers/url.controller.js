@@ -1,20 +1,17 @@
-const urlService = require("../services/url.service")
+const UrlService = require("../services/url.service")
 
-const createShortUrl = async(request, reply) => {
-    const { longUrl } = request.body;
 
-    const url = await urlService.createShortUrl({ longUrl });
+async function createShortUrl(request, reply) {
+    const { originalUrl } = request.body;
+
+    const response = await UrlService.createShortUrl(originalUrl);
 
     return reply.status(201).send({
-        status: "success",
-        data: {
-            shortCode: url.shortCode,
-            longUrl: url.longUrl,
-            shortUrl: `${request.protocol}://${request.hostname}/${url.shortCode}`,
-            createdAt: url.createdAt,
-        },
-    });
-};
+        success: true,
+        data: response
+    })
+}
+
 
 module.exports = {
     createShortUrl
