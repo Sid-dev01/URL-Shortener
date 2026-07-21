@@ -2,7 +2,7 @@
 CREATE TABLE "Url" (
     "id" SERIAL NOT NULL,
     "originalUrl" TEXT NOT NULL,
-    "shortUrl" TEXT NOT NULL,
+    "shortCode" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expiresAt" TIMESTAMP(3),
     "isActive" BOOLEAN NOT NULL DEFAULT true,
@@ -11,4 +11,4 @@ CREATE TABLE "Url" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Url_shortUrl_key" ON "Url"("shortUrl");
+CREATE UNIQUE INDEX "Url_shortCode_key" ON "Url"("shortCode");
