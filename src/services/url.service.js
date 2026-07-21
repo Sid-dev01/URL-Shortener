@@ -1,20 +1,25 @@
+const UrlRepository = require("../repositories/url.repository");
 const generateShortCode = require("../utils/generateShortCode");
 
-const urls = new Map();
+async function createShortUrl (originalUrl) {
 
-const createShortUrl = async ({ longUrl }) => {
-    const shortCode = generateShortCode();
+    let shortCode = generateShortCode();
 
-    const urlData = {
-        shortCode,
-        longUrl,
-        createdAt: new Date().toISOString(),
+    while(await UrlRepository.findByShortCode(shortCode)) {
+        shortCode = generateShortCode();
+    }
+
+    const url = await UrlRepository.create({
+        originalUrl,
+        shortCode
+    })
+
+    return {
+        originalUrl: url.originalUrl,
+        shortUrl: `${process.env.BASE_URL}/${url.shortCode}`,
     };
+}
 
-    urls.set(shortCode, urlData);
-
-    return urlData;
-};
 
 module.exports = {
     createShortUrl,
