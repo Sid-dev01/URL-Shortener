@@ -15,7 +15,7 @@ datasource db {
 model Url {
   id Int @id @default(autoincrement())
   originalUrl String
-  shortUrl String @unique
+  shortCode String @unique
   createdAt DateTime @default(now())
   expiresAt DateTime?
   isActive Boolean @default(true)
