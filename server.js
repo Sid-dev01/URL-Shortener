@@ -1,7 +1,5 @@
 require('dotenv').config();
-
 const app = require("./app");
-const env = require("./src/config/env");
 
 
 const startServer = async () => {
@@ -9,7 +7,7 @@ const startServer = async () => {
         const HOST = process.env.HOST;
 
         await app.listen({
-            port: env.PORT,
+            port: process.env.PORT,
             host: HOST
         });
     } catch (error) {

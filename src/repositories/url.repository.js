@@ -22,6 +22,14 @@ class UrlRepository {
             }
         })
     }
+
+    findByShortCode(shortCode) {
+        return prisma.url.findUnique({
+            where: {
+                shortCode,
+        },
+    });
+}
 }
 
 module.exports = new UrlRepository();

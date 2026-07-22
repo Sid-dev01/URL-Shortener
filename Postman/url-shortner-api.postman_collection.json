@@ -1,0 +1,172 @@
+{
+  "info": {
+    "_postman_id": "0b1d30cf-1dfd-4b3f-a75d-1fdbbc4b2b33",
+    "name": "URL Shortner API",
+    "description": "Postman collection for the URL Shortner Fastify API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Checks whether the API server is running."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"returns 200\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"returns success status\", function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.status).to.eql(\"success\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Short URL",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"originalUrl\": \"{{sampleOriginalUrl}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/{{apiVersion}}/shorten",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "{{apiVersion}}",
+            "shorten"
+          ]
+        },
+        "description": "Creates a short URL for a valid http or https URL."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"returns 201\", function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"stores generated short code\", function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.success).to.eql(true);",
+              "  pm.expect(json.data.shortUrl).to.be.a(\"string\");",
+              "",
+              "  const shortUrl = json.data.shortUrl;",
+              "  const shortCode = shortUrl.split(\"/\").filter(Boolean).pop();",
+              "",
+              "  pm.collectionVariables.set(\"shortUrl\", shortUrl);",
+              "  pm.collectionVariables.set(\"shortCode\", shortCode);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Redirect to Original URL",
+      "protocolProfileBehavior": {
+        "followRedirects": false
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/{{apiVersion}}/{{shortCode}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "{{apiVersion}}",
+            "{{shortCode}}"
+          ]
+        },
+        "description": "Redirects a short code to its original URL. Run Create Short URL first to populate shortCode."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"returns a redirect\", function () {",
+              "  pm.expect(pm.response.code).to.be.oneOf([301, 302, 307, 308]);",
+              "});",
+              "",
+              "pm.test(\"sets Location header\", function () {",
+              "  pm.expect(pm.response.headers.get(\"Location\")).to.exist;",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "apiVersion",
+      "value": "v1",
+      "type": "string"
+    },
+    {
+      "key": "sampleOriginalUrl",
+      "value": "https://example.com",
+      "type": "string"
+    },
+    {
+      "key": "shortCode",
+      "value": "replace-after-create",
+      "type": "string"
+    },
+    {
+      "key": "shortUrl",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

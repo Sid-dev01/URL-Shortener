@@ -12,7 +12,17 @@ async function createShortUrl(request, reply) {
     })
 }
 
+async function redirectToOriginalUrl(request, reply) {
+
+    const { shortCode } = request.params;
+
+    const originalUrl = await UrlService.getOriginalUrl(shortCode);
+
+    return reply.redirect(originalUrl);
+}
+
 
 module.exports = {
-    createShortUrl
+    createShortUrl,
+    redirectToOriginalUrl
 }
