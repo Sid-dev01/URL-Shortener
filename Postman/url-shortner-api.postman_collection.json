@@ -110,13 +110,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/api/{{apiVersion}}/{{shortCode}}",
+          "raw": "{{baseUrl}}/{{shortCode}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "{{apiVersion}}",
             "{{shortCode}}"
           ]
         },
