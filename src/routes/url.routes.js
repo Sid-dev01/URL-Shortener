@@ -5,9 +5,9 @@ const { createShortUrlSchema } = require("../schemas/url.schema");
 async function urlRoutes(fastify) {
     fastify.post(
         "/shorten",
-        rateLimiter,
         {
             schema: createShortUrlSchema,
+            preHandler: [rateLimiter]
         },
         UrlController.createShortUrl
     )

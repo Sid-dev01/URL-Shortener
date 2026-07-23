@@ -4,7 +4,9 @@ const UrlController = require("../controllers/url.controller");
 async function redirectRoutes(fastify) {
     fastify.get(
         "/:shortCode", 
-        rateLimiter,
+        {
+            preHandler: [rateLimiter]
+        },
         UrlController.redirectToOriginalUrl
     );
 }
