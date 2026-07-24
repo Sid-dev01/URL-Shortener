@@ -1,11 +1,15 @@
 require('dotenv').config();
 const app = require("./app");
 const redisClient = require("./src/config/redis");
+const fastifyRateLimit = require("@fastify/rate-limit");
 
 
 const startServer = async () => {
     try {
 
+        await app.register(fastifyRateLimit, {
+            global: false,
+        })
         await redisClient.connect();
 
         await app.listen({
