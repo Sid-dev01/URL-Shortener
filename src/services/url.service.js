@@ -7,21 +7,49 @@ async function createShortUrl (originalUrl) {
     if (!validateUrl(originalUrl)){
         throw new Error("Invalid Url.");
     }
+
+    const existingUrl = await UrlRepository.findByOriginalUrl(originalUrl);
+
+    if (existingUrl) {
+        return {
+            originalUrl: existingUrl.originalUrl,
+            shortUrl: `${process.env.BASE_URL}/${existingUrl.shortCode}`
+        }
+    };
+
     let shortCode = generateShortCode();
 
     while(await UrlRepository.findByShortCode(shortCode)) {
         shortCode = generateShortCode();
     }
 
-    const url = await UrlRepository.create({
-        originalUrl,
-        shortCode
-    })
+    try {
+        const url = await UrlRepository.create({
+            originalUrl,
+            shortCode
+        })
 
-    return {
-        originalUrl: url.originalUrl,
-        shortUrl: `${process.env.BASE_URL}/${url.shortCode}`,
-    };
+        return {
+            originalUrl: url.originalUrl,
+            shortUrl: `${process.env.BASE_URL}/${url.shortCode}`,
+        };
+    } catch (error) {
+        if (
+            error.code == "P2002" &&
+            error.meta?.target?.includes("originalUrl")
+        ) {
+            const existingUrl = await UrlRepository.findByOriginalUrl(originalUrl);
+
+            if(existingUrl){
+                return{
+                    originalUrl: existingUrl.originalUrl,
+                    shortUrl: `${process.env.BASE_URL}/${existingUrl.shortCode}`
+                }
+            }
+        }
+
+        throw error;
+    }
 }
 
 async function getOriginalUrl(shortCode) {
