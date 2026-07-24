@@ -1,3 +1,4 @@
+const UrlCache = require("../cache/url.cache");
 const validateUrl = require("../utils/validateUrl");
 const UrlRepository = require("../repositories/url.repository");
 const generateShortCode = require("../utils/generateShortCode");
@@ -8,9 +9,28 @@ async function createShortUrl (originalUrl) {
         throw new Error("Invalid Url.");
     }
 
+    const cachedShortCode = await UrlCache.getShortCodeByOriginalUrl(originalUrl);
+
+    if(cachedShortCode){
+        console.log("Look up Cache hit")
+
+        return {
+            originalUrl,
+            shortUrl: `${process.env.BASE_URL}/${cachedShortCode}`,
+        };
+    }
+
+    console.log("Lookup missed.");
+
     const existingUrl = await UrlRepository.findByOriginalUrl(originalUrl);
 
     if (existingUrl) {
+
+        await UrlCache.setOriginalUrl(
+            existingUrl.shortCode,
+            originalUrl
+        );
+
         return {
             originalUrl: existingUrl.originalUrl,
             shortUrl: `${process.env.BASE_URL}/${existingUrl.shortCode}`
@@ -29,6 +49,11 @@ async function createShortUrl (originalUrl) {
             shortCode
         })
 
+        await UrlCache.setShortCodeByOriginalUrl(
+            originalUrl,
+            url.shortCode
+        )
+
         return {
             originalUrl: url.originalUrl,
             shortUrl: `${process.env.BASE_URL}/${url.shortCode}`,
@@ -41,10 +66,16 @@ async function createShortUrl (originalUrl) {
             const existingUrl = await UrlRepository.findByOriginalUrl(originalUrl);
 
             if(existingUrl){
+
+                await UrlCache.setShortCodeByOriginalUrl(
+                    originalUrl,
+                    existingUrl.shortCode
+                )
+
                 return{
                     originalUrl: existingUrl.originalUrl,
                     shortUrl: `${process.env.BASE_URL}/${existingUrl.shortCode}`
-                }
+                };
             }
         }
 
@@ -53,11 +84,23 @@ async function createShortUrl (originalUrl) {
 }
 
 async function getOriginalUrl(shortCode) {
+
+    const cachedUrl = await UrlCache.getOriginalUrl(shortCode);
+
+    if (cachedUrl) {
+        console.log("Redirect Cache hit");
+        return cachedUrl.originalUrl;
+    }
+    
+    console.log("Redirect Cache miss")
+
     const url = await UrlRepository.findByShortCode(shortCode);
 
     if (!url) {
         throw new Error("Short URL not found");
     }
+
+    await UrlCache.setOriginalUrl(shortCode, url);
 
     return url.originalUrl;
 }
