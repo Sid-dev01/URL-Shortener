@@ -6,6 +6,7 @@ A Fastify and Prisma based URL shortener API. It creates short links for valid H
 
 - Node.js
 - Fastify
+- Swagger / OpenAPI
 - Prisma
 - PostgreSQL
 - Postman collection for API testing
@@ -60,6 +61,14 @@ npx.cmd prisma generate
 ```
 
 ## API Routes
+
+Interactive Swagger documentation is available after the server starts:
+
+```text
+GET /docs
+GET /docs/json
+GET /docs/yaml
+```
 
 ### Health Check
 
