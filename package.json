@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/rate-limit": "^11.1.0",
+    "@fastify/swagger": "^9.8.1",
+    "@fastify/swagger-ui": "^6.1.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "dotenv": "^17.4.2",
