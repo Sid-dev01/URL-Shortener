@@ -26,10 +26,10 @@ async function createShortUrl (originalUrl) {
 
     if (existingUrl) {
 
-        await UrlCache.setOriginalUrl(
-            existingUrl.shortCode,
-            originalUrl
-        );
+        await UrlCache.setShortCodeByOriginalUrl(
+            originalUrl,
+            existingUrl.shortCode
+        )
 
         return {
             originalUrl: existingUrl.originalUrl,
@@ -60,7 +60,7 @@ async function createShortUrl (originalUrl) {
         };
     } catch (error) {
         if (
-            error.code == "P2002" &&
+            error.code === "P2002" &&
             error.meta?.target?.includes("originalUrl")
         ) {
             const existingUrl = await UrlRepository.findByOriginalUrl(originalUrl);
