@@ -4,11 +4,14 @@ const swaggerUi = require("@fastify/swagger-ui");
 const { swaggerOptions, swaggerUiOptions } = require("./src/config/swagger");
 const routes = require("./src/routes/index")
 const errorHandler = require("./src/middlewares/errorHandler");
+const configureCors = require("./src/config/cors");
 
 
 const app = fastify({
     logger: true,
 });
+
+configureCors(app);
 
 app.register(swagger, swaggerOptions);
 app.register(swaggerUi, swaggerUiOptions);

@@ -6,7 +6,7 @@ const generateShortCode = require("../utils/generateShortCode");
 async function createShortUrl (originalUrl) {
 
     if (!validateUrl(originalUrl)){
-        throw new Error("Invalid Url.");
+        throw new Error("Invalid URL");
     }
 
     const cachedShortCode = await UrlCache.getShortCodeByOriginalUrl(originalUrl);
